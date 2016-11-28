@@ -9,6 +9,8 @@
   set_fact:
     resolvconffile: >-
       {%- if resolvconf.rc == 0 -%}/etc/resolvconf/resolv.conf.d/head{%- else -%}/etc/resolv.conf{%- endif -%}
+    base: >-
+      {%- if resolvconf.rc == 0 -%}['/etc/resolvconf/resolv.conf.d/base']{%- else -%}[]{%- endif -%}
   when: ansible_os_family != "CoreOS"
 
 - name: target temporary resolvconf cloud init file
@@ -35,31 +37,17 @@
     nameserverentries:
       "{{ dnsmasq_server|default([]) + nameservers|default([]) }}"
 
-- name: Remove search and nameserver options from resolvconf head
+- name: Remove search/domain/nameserver options
   lineinfile:
-    dest: /etc/resolvconf/resolv.conf.d/head
+    dest: "{{item[0]}}"
     state: absent
-    regexp: "^{{ item }}.*$"
+    regexp: "^{{ item[1] }}.*$"
     backup: yes
     follow: yes
-  with_items:
-    - search
-    - nameserver
-  when: resolvconf.rc == 0
+  with_nested:
+    - "{{ [resolvconffile] + base|default([]) }}"
+    - [ 'search', 'nameserver', 'domain' ]
   notify: Dnsmasq | update resolvconf
-
-- name: Remove search and nameserver options from resolvconf cloud init temporary file
-  lineinfile:
-    dest: "{{resolvconffile}}"
-    state: absent
-    regexp: "^{{ item }}.*$"
-    backup: yes
-    follow: yes
-  with_items:
-    - search
-    - nameserver
-  when: ansible_os_family == "CoreOS"
-  notify: Dnsmasq | update resolvconf for CoreOS
 
 - name: Add search domains to resolvconf file
   lineinfile:
@@ -99,19 +87,6 @@
     - ndots:{{ ndots }}
     - timeout:2
     - attempts:2
-  notify: Dnsmasq | update resolvconf
-
-- name: Remove search and nameserver options from resolvconf base
-  lineinfile:
-    dest: /etc/resolvconf/resolv.conf.d/base
-    state: absent
-    regexp: "^{{ item }}.*$"
-    backup: yes
-    follow: yes
-  with_items:
-    - search
-    - nameserver
-  when: resolvconf.rc == 0
   notify: Dnsmasq | update resolvconf
 
 - name: disable resolv.conf modification by dhclient

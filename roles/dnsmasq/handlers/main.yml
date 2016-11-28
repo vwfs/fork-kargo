@@ -14,7 +14,7 @@
       networking
       {%- endif %}
     state: restarted
-  when: ansible_os_family != "RedHat" and ansible_os_family != "CoreOS"
+  when: ansible_os_family != "CoreOS"
 
 - name: Dnsmasq | update resolvconf
   command: /bin/true

@@ -22,6 +22,10 @@ skip_dnsmasq: false
 upstream_dns_servers: [172.18.32.6, 172.18.32.7, 8.8.8.8, 8.8.8.4]
 ```
 The vars are explained below as well.
+Also note, existing nameserver/search/domain records will be purged from
+the `/etc/resolv.conf`, including base/head/cloud-init config files, and
+reconfigured from the aforementioned vars. This is required for hostnet pods
+to be able to resolve DNS requests.
 
 DNS configuration details
 -------------------------
