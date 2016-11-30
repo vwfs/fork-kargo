@@ -1,4 +1,6 @@
 ---
+- include: pre-upgrade.yml
+
 - include: dnsmasq.yml
   when: "{{ not skip_dnsmasq_k8s|bool }}"
 

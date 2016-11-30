@@ -1,0 +1,10 @@
+---
+- name: "Pre-upgrade | remove dhclient nodnsupdate hooks"
+  file:
+    path: "{{ item }}"
+    state: absent
+  ignore_errors: true
+  when: ansible_os_family != "CoreOS"
+  with_items:
+    - /etc/dhcp/dhclient-enter-hooks.d/znodnsupdate
+    - /etc/dhcp/dhclient.d/nodnsupdate

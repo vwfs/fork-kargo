@@ -22,10 +22,16 @@ skip_dnsmasq: false
 upstream_dns_servers: [172.18.32.6, 172.18.32.7, 8.8.8.8, 8.8.8.4]
 ```
 The vars are explained below as well.
+
 Also note, existing nameserver/search/domain records will be purged from
-the `/etc/resolv.conf`, including base/head/cloud-init config files, and
-reconfigured from the aforementioned vars. This is required for hostnet pods
-to be able to resolve DNS requests.
+the `/etc/resolv.conf`, including base/head/cloud-init config files. This
+is required for hostnet pods to be able to resolve DNS requests. New records
+will be persisted from the aforementioned vars either statically in the
+`/etc/resolv.conf`, if there is no resolvconf tool and dhclient is blocked
+from updating that file, or via resolvconf head/dhclient/cloud-init (CoreOS)
+hooks otherwise. The ``zdnsupdate.sh`` hook for dhclient and CoreOS cloud-init
+config file ensure the purged records will not be lost for ever but only merged
+with new data.
 
 DNS configuration details
 -------------------------
