@@ -33,7 +33,7 @@
 - name: generate nameservers to resolvconf
   set_fact:
     nameserverentries:
-      "{{ dnsmasq_server|default([]) + nameservers|default([]) }}"
+      "{{ dnsmasq_server|default([]) + nameservers|default([default_resolver]) }}"
 
 - name: Remove search and nameserver options from resolvconf head
   lineinfile:
@@ -46,7 +46,7 @@
     - search
     - nameserver
   when: resolvconf.rc == 0
-  notify: Dnsmasq | update resolvconf
+  notify: Preinstall | update resolvconf
 
 - name: Remove search and nameserver options from resolvconf cloud init temporary file
   lineinfile:
@@ -59,7 +59,7 @@
     - search
     - nameserver
   when: ansible_os_family == "CoreOS"
-  notify: Dnsmasq | update resolvconf for CoreOS
+  notify: Preinstall | update resolvconf for CoreOS
 
 - name: Add search domains to resolvconf file
   lineinfile:
@@ -69,7 +69,7 @@
     insertbefore: BOF
     backup: yes
     follow: yes
-  notify: Dnsmasq | update resolvconf
+  notify: Preinstall | update resolvconf
 
 - name: Add nameservers to resolv.conf
   blockinfile:
@@ -84,7 +84,7 @@
     backup: yes
     follow: yes
     marker: "# Ansible nameservers {mark}"
-  notify: Dnsmasq | update resolvconf
+  notify: Preinstall | update resolvconf
 
 - name: Add options to resolv.conf
   lineinfile:
@@ -99,7 +99,7 @@
     - ndots:{{ ndots }}
     - timeout:2
     - attempts:2
-  notify: Dnsmasq | update resolvconf
+  notify: Preinstall | update resolvconf
 
 - name: Remove search and nameserver options from resolvconf base
   lineinfile:
@@ -112,16 +112,16 @@
     - search
     - nameserver
   when: resolvconf.rc == 0
-  notify: Dnsmasq | update resolvconf
+  notify: Preinstall | update resolvconf
 
 - name: disable resolv.conf modification by dhclient
   copy: src=dhclient_nodnsupdate dest=/etc/dhcp/dhclient-enter-hooks.d/znodnsupdate mode=0755
-  notify: Dnsmasq | restart network
+  notify: Preinstall | restart network
   when: ansible_os_family == "Debian"
 
 - name: disable resolv.conf modification by dhclient
   copy: src=dhclient_nodnsupdate dest=/etc/dhcp/dhclient.d/nodnsupdate mode=u+x
-  notify: Dnsmasq | restart network
+  notify: Preinstall | restart network
   when: ansible_os_family == "RedHat"
 
 - name: get temporary resolveconf cloud init file content
@@ -135,5 +135,5 @@
     src: resolvconf.j2
     owner: root
     mode: 0644
-  notify: Dnsmasq | update resolvconf for CoreOS
+  notify: Preinstall | update resolvconf for CoreOS
   when: ansible_os_family == "CoreOS"

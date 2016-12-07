@@ -14,8 +14,11 @@
 
 - hosts: all:!network-storage
   any_errors_fatal: true
+  vars:
+    - dns_server: ''
   roles:
-    - { role: kubernetes/preinstall, tags: preinstall }
+    - { role: kubernetes/preinstall, tags: [bootstrap-os, resolvconf] }
+    - { role: docker, tags: docker }
 
 - hosts: etcd:!k8s-cluster
   any_errors_fatal: true
@@ -46,3 +49,8 @@
   roles:
     - { role: kubernetes-apps/lib, tags: apps }
     - { role: kubernetes-apps, tags: apps }
+
+- hosts: all:!network-storage
+  any_errors_fatal: true
+  roles:
+    - { role: kubernetes/preinstall, tags: resolvconf }
