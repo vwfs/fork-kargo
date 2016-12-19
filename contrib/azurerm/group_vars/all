@@ -9,10 +9,10 @@ use_bastion: false
 number_of_k8s_masters: 3
 number_of_k8s_nodes: 3
 
-masters_vm_size: Standard_A2
+masters_vm_size: Standard_D1_v2
 masters_os_disk_size: 1000
 
-minions_vm_size: Standard_A2
+minions_vm_size: Standard_D2_v2
 minions_os_disk_size: 1000
 
 admin_username: devops

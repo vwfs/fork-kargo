@@ -17,7 +17,7 @@ availabilitySetMinions: "minion-avs"
 faultDomainCount: 3
 updateDomainCount: 10
 
-bastionVmSize: Standard_A0
+bastionVmSize: Basic_A0
 bastionVMName: bastion
 bastionIPAddressName: bastion-pubip
 
