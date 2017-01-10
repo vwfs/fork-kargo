@@ -204,3 +204,6 @@ kpm_packages: []
 rkt_version: 1.21.0
 etcd_deployment_type: docker
 kubelet_deployment_type: docker
+
+# Please specify if you want to perform a kernel upgrade
+kernel_upgrade: false
