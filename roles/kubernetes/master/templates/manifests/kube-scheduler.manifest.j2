@@ -24,6 +24,9 @@ spec:
     - --leader-elect=true
     - --master={{ kube_apiserver_endpoint }}
     - --v={{ kube_log_level }}
+    env:
+    - name: KUBE_MAX_PD_VOLS
+      value: "4"
     livenessProbe:
       httpGet:
         host: 127.0.0.1
