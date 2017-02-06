@@ -9,7 +9,7 @@ if [ "$AZURE_RESOURCE_GROUP" == "" ]; then
     exit 1
 fi
 
-ansible-playbook generate-templates.yml
+ansible-playbook -e "@group_vars/all" -e "@vars-$AZURE_RESOURCE_GROUP.yml" generate-templates.yml
 
 azure group deployment create -f ./.generated/network.json -g $AZURE_RESOURCE_GROUP
 azure group deployment create -f ./.generated/storage.json -g $AZURE_RESOURCE_GROUP

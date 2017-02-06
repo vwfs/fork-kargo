@@ -9,4 +9,4 @@ if [ "$AZURE_RESOURCE_GROUP" == "" ]; then
     exit 1
 fi
 
-ansible-playbook generate-inventory.yml -e azure_resource_group="$AZURE_RESOURCE_GROUP"
+ansible-playbook generate-inventory.yml -e azure_resource_group="$AZURE_RESOURCE_GROUP" -e "@group_vars/all" -e "@vars-$AZURE_RESOURCE_GROUP.yml"
