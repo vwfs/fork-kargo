@@ -11,8 +11,8 @@ server=/{{ dns_domain }}/{{ skydns_server }}
 local=/{{ bogus_domains }}
 
 #Set upstream dns servers
-{% if upstream_dns_servers is defined %}
-{% for srv in upstream_dns_servers %}
+{% if system_and_upstream_dns_servers|length > 0 %}
+{% for srv in system_and_upstream_dns_servers %}
 server={{ srv }}
 {% endfor %}
 no-resolv
